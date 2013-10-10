@@ -3,7 +3,29 @@
         geocoder,
         LocationViewModel,
         app = global.app = global.app || {};
+    
+    function DrawPath(map) {
+        
+            $.getJSON('data/pathToKaufland.json', function(data) {        
+                
+              var items = [];
+                
+              $.each(data, function(key, val) {
+                items.push( new google.maps.LatLng(val.latitude, val.longitude) );
+              });
+                
+                var flightPath = new google.maps.Polyline({
+                    path: items,
+                    geodesic: true,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                  });
 
+                  flightPath.setMap(map);
+            });
+        };
+    
     LocationViewModel = kendo.data.ObservableObject.extend({
         _lastMarker: null,
         _isLoading: false,
@@ -12,16 +34,41 @@
         onNavigateHome: function () {
             var that = this,
                 position;
-
+            
             that._isLoading = true;
             that.showLoading();
-
+            
             navigator.geolocation.getCurrentPosition(
                 function (position) {
-                    position = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                    /*position = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
                     map.panTo(position);
                     that._putMarker(position);
 
+                    that._isLoading = false;
+                    that.hideLoading();*/
+                    position = new google.maps.LatLng(42.651060, 23.379035);
+                    map.panTo(position);
+                    that._putMarker(position);
+                    
+                    var endMarkerPosition = new google.maps.LatLng(42.656320, 23.383273);                    
+                    that._putMarker(endMarkerPosition);
+                    DrawPath(map);
+                    /*
+                    var items = [];
+                    
+                    items.push(position);
+                    items.push(endMarkerPosition);
+                    
+                    var flightPath = new google.maps.Polyline({
+                        path: items,
+                        geodesic: true,
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
+                      });
+
+                    flightPath.setMap(map);
+                    */
                     that._isLoading = false;
                     that.hideLoading();
                 },
@@ -42,7 +89,7 @@
                 }
             );
         },
-
+        
         onSearchAddress: function () {
             var that = this;
 
@@ -76,9 +123,9 @@
         _putMarker: function (position) {
             var that = this;
 
-            if (that._lastMarker !== null && that._lastMarker !== undefined) {
+            /*if (that._lastMarker !== null && that._lastMarker !== undefined) {
                 that._lastMarker.setMap(null);
-            }
+            }*/
 
             that._lastMarker = new google.maps.Marker({
                 map: map,

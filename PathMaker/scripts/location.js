@@ -4,38 +4,6 @@
         LocationViewModel,
         app = global.app = global.app || {};
     
-    /*function DrawPath(map, that) {
-        
-            $.getJSON('data/pathToKaufland.json', function(data) {        
-                
-              var items = [];
-                
-              $.each(data, function(key, val) {
-                items.push( new google.maps.LatLng(val.latitude, val.longitude) );
-              });
-                
-                var len = items.length;
-                
-                var positionOfStartMarker = new google.maps.LatLng(items[0].latitude, items[0].longitude);
-                var positionOfEndMarker = new google.maps.LatLng(items[len - 1].latitude, items[len - 1].longitude);
-                
-                
-                map.panTo(positionOfStartMarker);
-                this.LocationViewModel._putMarker(positionOfStartMarker);
-                this.LocationViewModel._putMarker(positionOfEndMarker);
-                
-                var flightPath = new google.maps.Polyline({
-                    path: items,
-                    geodesic: true,
-                    strokeColor: '#FF0000',
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2
-                  });
-
-                  flightPath.setMap(map);
-            });
-        };*/
-    
     LocationViewModel = kendo.data.ObservableObject.extend({
         _lastMarker: null,
         _isLoading: false,
@@ -50,38 +18,17 @@
             
             navigator.geolocation.getCurrentPosition(
                 function (position) {
-                    /*
+                    
                     position = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                    map.panTo(position);
-                    that._putMarker(position);   
-                    */
+                    //map.panTo(position);
+                    //that._putMarker(position);   
+                    
                     
                     that._isLoading = false;
                     that.hideLoading();
-                    //position = new google.maps.LatLng(42.651060, 23.379035);
-                    //map.panTo(position);
-                    //that._putMarker(position);
                     
-                    //var endMarkerPosition = new google.maps.LatLng(42.656320, 23.383273);                    
-                    //that._putMarker(endMarkerPosition);
-                    //DrawPath(map, that);
-                    that.drawPath(that);
-                    /*
-                    var items = [];
+                    that.drawPath();
                     
-                    items.push(position);
-                    items.push(endMarkerPosition);
-                    
-                    var flightPath = new google.maps.Polyline({
-                        path: items,
-                        geodesic: true,
-                        strokeColor: '#FF0000',
-                        strokeOpacity: 1.0,
-                        strokeWeight: 2
-                      });
-
-                    flightPath.setMap(map);
-                    */
                     that._isLoading = false;
                     that.hideLoading();
                 },
@@ -102,7 +49,9 @@
                 }
             );
         },
-        drawPath: function(that){
+        drawPath: function(){
+            var that = this;
+            
             $.getJSON('data/pathToKaufland.json', function(data) {        
                 
               var items = [];
@@ -111,10 +60,10 @@
                 items.push( new google.maps.LatLng(val.latitude, val.longitude) );
               });
                 
-                var len = items.length;
+                var len = data.length;
                 
-                var positionOfStartMarker = new google.maps.LatLng(items[0].lb, items[0].mb);
-                var positionOfEndMarker = new google.maps.LatLng(items[len - 1].lb, items[len - 1].mb);
+                var positionOfStartMarker = new google.maps.LatLng(data[0].latitude, data[0].longitude);
+                var positionOfEndMarker = new google.maps.LatLng(data[len - 1].latitude, data[len - 1].longitude);
                 
                 
                 map.panTo(positionOfStartMarker);
@@ -125,7 +74,7 @@
                     path: items,
                     geodesic: true,
                     strokeColor: '#FF0000',
-                    strokeOpacity: 1.0,
+                    strokeOpacity: 0.5,
                     strokeWeight: 2
                   });
 

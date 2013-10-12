@@ -24,41 +24,62 @@
         //here i should stop the path maker
         
         
-        function onPrompt(results) {
+        //function onPrompt(results) {
             
-            // if we press 'Save' we write to the file
-            if (results.buttonIndex == 1) {
-                // save to file with name: results.input1
+        //    // if we press 'Save' we write to the file
+        //    if (results.buttonIndex == 1) {
+        //        // save to file with name: results.input1
                 
-                // When the file is created 
-                navigator.notification.vibrate(2000);
-            }
+        //        // When the file is created 
+        //        navigator.notification.vibrate(2000);
+        //    }
             
-        }
-        navigator.notification.prompt(
-            'Write a name for the file:',  // message
-            onPrompt,                  // callback to invoke
-            'Would you like to save the current path ?',            // title
-            ['Save','Cancel'],             // buttonLabels
-            'PathMakerFile'                 // defaultText
-        );
+        //}
+        //navigator.notification.prompt(
+        //    'Write a name for the file:',  // message
+        //    onPrompt,                  // callback to invoke
+        //    'Would you like to save the current path ?',            // title
+        //    ['Save','Cancel'],             // buttonLabels
+        //    'PathMakerFile'                 // defaultText
+        //);
     };
     app.stopPathMaker = function(){
         //here i should stop the path maker
         
         
-        function onPrompt(results) {
+        
+        showPrompt();
+    };
+    function onPrompt(results) {
             
-            // if we press 'Save' we write to the file
-            if (results.buttonIndex === 1){
-                // save to file with name: results.input1
+        // if we press 'Save' we write to the file
+        if (results.buttonIndex === 1){
+            // save to file with name: results.input1
+            
+            if (results.input1 !== null && results.input1 !== '') {
+                FileApp.run(result.input1 + ".json");
+                // When the file is created 
+                navigator.notification.vibrate(2000);
+            }
+            else {
+                navigator.notification.alert(
+                    "You need to specify a name",
+                    showPrompt,
+                    "Error: Invalid name",
+                    "Ok"
+                );
             }
             
         }
+        
+    };
+    
+    function showPrompt(){
+        
         navigator.notification.prompt(
             'Write a name for the file:',  // message
             onPrompt,                  // callback to invoke
-            'Would you like to save the current path ?',            // title
+            'Would you like to save the current path ?',  // title
             ['Save','Cancel'],             // buttonLabels
             'PathMakerFile'                 // defaultText
         );

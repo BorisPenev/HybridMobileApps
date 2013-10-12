@@ -3,6 +3,7 @@
         geocoder,
         LocationViewModel,
         app = global.app = global.app || {};
+        
     
     LocationViewModel = kendo.data.ObservableObject.extend({
         _lastMarker: null,
@@ -27,6 +28,7 @@
                     that._isLoading = false;
                     that.hideLoading();
                     
+                    that.onPositionChange();
                     that.drawPath();
                     
                     that._isLoading = false;
@@ -48,6 +50,54 @@
                     enableHighAccuracy: true
                 }
             );
+        },
+        onPositionChange: function(){
+              var watchID = null;
+
+            // Cordova is ready
+            //
+            // Throw an error if no update is received every 30 seconds
+            var options = { timeout: 30000 };
+            watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
+            
+
+            // onSuccess Geolocation
+            //
+            function onSuccess(position) {
+                
+                // On successful position change push the data in the FileModel.geoPoints array
+                var geoData = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                        speed: position.coords.speed,
+                        timestamp: position.coords.timestamp
+                    };
+                
+                var len = window.fileModel.geoPoints.length;
+                if (len !== null && len !== 0){
+                    
+                    if (window.fileModel.geoPoints[len - 1].latitude !== geoData.latitude || 
+                        window.fileModel.geoPoints[len - 1].longitude !== geoData.longitude) {
+                            
+                        window.fileModel.geoPoints.push(geoData);
+                        console.log("GeoData: ", window.fileModel.geoPoints);
+                        console.log("WatchID: ", watchID);
+                    }
+                }
+                else {
+                    window.fileModel.geoPoints.push(geoData);
+                        console.log("GeoData1: ", window.fileModel.geoPoints);
+                }
+            }
+
+            // onError Callback receives a PositionError object
+            //
+            function onError(error) {
+                console.log("Error: ", error.code, "Message: ", error.Message);
+                alert('code: '    + error.code    + '\n' +
+                      'message: ' + error.message + '\n');
+            }  
         },
         drawPath: function(){
             var that = this;
